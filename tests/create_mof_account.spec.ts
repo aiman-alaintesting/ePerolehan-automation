@@ -1,0 +1,169 @@
+import { test, expect } from '@playwright/test';
+// Import the specific functions we need from our new utility file
+import { generateRandomName, generateRandomICNumber } from './utils/datagenerator';
+
+test('register MOF Account', async ({ page }) => {
+    await page.goto('http://ngepuat.eperolehan.com.my/home');
+    await expect(page).toHaveURL('http://ngepuat.eperolehan.com.my/home');
+
+    await page.getByRole('button', { name: '×' }).click();
+    await page.locator('[id="_82_languageId"]').selectOption('en_US');
+    await page.waitForTimeout(3000); // Wait 2 seconds
+    await page.locator('xpath=//*[@id="quicklaunch"]/div/div[2]/div[2]/div').click();
+    await page.locator('.ui-radiobutton-box').nth(1).click();
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('.ui-chkbox-box').click();
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.waitForTimeout(3000); // Wait 3 seconds
+
+//Supplier Registration Screen
+//Account Information
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:suppTypeId_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:suppTypeId_panel"]').getByText('Contractor').click();
+    await page.waitForTimeout(3000); // Wait 3 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_panel"]').getByText('ROB - Sole-Proprietorship').click();
+    await page.waitForTimeout(3000); // Wait 3 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').fill('00112233-B');
+    await page.waitForLoadState('networkidle'); //wait for page load
+//Business Network
+    await page.locator('.ui-chkbox-box').first().click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+//Company Information
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:companyNameId"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:companyNameId"]').fill('testBusinessROBSole_1');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    //Date Picker - Registration Date (today) 
+    const today = String(new Date().getDate());
+    await page.getByRole('button', { name: 'ui-button' }).click();
+    await page.locator('.ui-datepicker, .ui-calendar, .ui-datepicker-div').waitFor({ state: 'visible' });
+    await page.getByRole('link', { name: today }).click();
+
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:compAdd1"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:compAdd1"]').fill('Company Address line_1');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busState_label"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busState_panel"]').getByText('JOHOR').click();
+    await page.waitForTimeout(3000); // Wait 3 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busDistrict_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busDistrict_panel"]').getByText('BATU PAHAT').click();
+    await page.waitForTimeout(3000); // Wait 3 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busCity_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busCity_panel"]').getByText('AYER HITAM').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('button', { name: 'View Map' }).click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('xpath=//*[@id="_onlineRegistration_WAR_NGePportlet_:form:acgmap:gmapDialog:gmapDialogId"]/div[1]/a/span').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:compPostCodeMy"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:compPostCodeMy"]').fill('12345');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:areaCodeCompId"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:areaCodeCompId"]').fill('12');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:phoneNoCompId"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:phoneNoCompId"]').fill('34567890');
+    await page.waitForLoadState('networkidle'); //wait for page load
+
+//Owner Information
+    // Call the imported functions to get the random data
+    const randomName = generateRandomName(); 
+    const randomIcNumber = generateRandomICNumber(); 
+  
+    console.log(`Using random name: ${randomName}`);
+    console.log(`Using randomly generated IC number: ${randomIcNumber}`);
+
+    // Selects the input that is the 3rd child (td) of the first table row (tr:nth-child(1)) *CSS selector
+    const ownerNameInput = page.locator(
+    '#_onlineRegistration_WAR_NGePportlet_\\:form\\:tableOwner tbody tr:nth-child(1) td:nth-child(3) input'
+    );
+    await ownerNameInput.fill(randomName);
+    await page.waitForLoadState('networkidle'); //wait for page load
+
+    // Selects the input that is the 5th child (td) of the first table row
+    const icNumberInput = page.locator(
+    '#_onlineRegistration_WAR_NGePportlet_\\:form\\:tableOwner tbody tr:nth-child(1) td:nth-child(5) input'
+    );
+    await icNumberInput.fill(randomIcNumber);
+    await page.waitForLoadState('networkidle'); //wait for page load
+
+//Nature of Business    
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busiNatureId:busiNatureIdlovBtn"]').click();
+    //await page.locator('#_onlineRegistration_WAR_NGePportlet_:form:busiNatureId:busiNatureIdlovBtn').waitFor({ state: 'visible' });
+    //await page.locator('#_onlineRegistration_WAR_NGePportlet_:form:busiNatureId:busiNatureIdlovBtn').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('gridcell', { name: 'Ternakan udang air tawar' }).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('button', { name: 'Select' }).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+
+//Bank Information
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:addBnkBtnId"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:bankInfoId:0:bankNameId_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:bankInfoId:0:bankNameId_panel"]').getByText('AFFIN BANK BERHAD').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:bankInfoId:0:bankAccNoId"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:bankInfoId:0:bankAccNoId"]').fill('123456789');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+
+//Supplier Administrator Information
+    // Check the checkbox based on the associated text
+    // Define both locators first so they are available
+    const supplierAdminText = page.getByText('Please click if supplier administrator same as owner in Company Information');
+    // 1. Locator for the actual hidden input (used for assertions)
+    const checkboxInput = supplierAdminText.locator('input[type="checkbox"]');
+    // 2. Locator for the visual DIV (used for clicking)
+    const visualCheckboxBox = supplierAdminText.locator('.ui-chkbox-box');
+    // Action: Click the visible div
+    await visualCheckboxBox.click();
+    // Assertion: Verify the underlying input is now checked
+    await expect(checkboxInput).toBeChecked(); // This line now works because checkboxInput is defined above
+    await page.waitForTimeout(3000); // Wait 3 seconds
+
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:salutationId_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:salutationId_panel"]').getByText('Cik', { exact: true }).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('cell', { name: 'Yes' }).nth(1).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermAdd1"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermAdd1"]').fill('Address 1');
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermState_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermState_panel"]').getByText('JOHOR').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermDistrict_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermDistrict_panel"]').getByText('BATU PAHAT').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermCity_label"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermCity_panel"]').getByText('AYER HITAM').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').fill('12345');
+    await page.waitForLoadState('networkidle'); //wait for page load
+    await page.getByRole('cell', { name: 'Muslim' }).nth(1).click();
+    await page.waitForLoadState('networkidle'); //wait for page load
+    //Date Picker - Registration Date (today) 
+    const today_ = String(new Date().getDate());
+    await page.getByRole('button', { name: 'ui-button' }).click();
+    await page.locator('.ui-datepicker, .ui-calendar, .ui-datepicker-div').waitFor({ state: 'visible' });
+    await page.getByRole('link', { name: today_ }).click();
+
+});
