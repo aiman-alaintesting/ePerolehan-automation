@@ -1,10 +1,39 @@
 import { test, expect } from '@playwright/test';
+import { TimeoutError } from 'playwright/test'; // Import the specific error type
 // Import the specific functions we need from our new utility file
 import { generateRandomName, generateRandomICNumber } from './utils/datagenerator';
 
 test('register MOF Account', async ({ page }) => {
-    await page.goto('http://ngepsit.eperolehan.com.my/home');
-    await expect(page).toHaveURL('http://ngepsit.eperolehan.com.my/home');
+
+    const targetUrl = 'http://ngepsit.eperolehan.com.my/home'; // Replace with your actual URL
+  const navigationTimeout = 15000; // Set "too long" to 15 seconds (15000ms)
+
+  try {
+    // Attempt to go to the URL with a specific timeout
+    await page.goto(targetUrl, { timeout: navigationTimeout });
+    console.log('Successfully navigated to the website.');
+
+  } catch (error) {
+    // Check if the error is specifically a Playwright TimeoutError
+    if (error instanceof TimeoutError) {
+      console.warn(`Navigation timed out after ${navigationTimeout / 1000}s. Refreshing page...`);
+      
+      // Refresh the page
+      await page.reload();
+
+      // Wait for the page to reach a stable state after the reload
+      await page.waitForLoadState('domcontentloaded'); 
+
+      console.log('Page refreshed and ready. Proceeding with the test.');
+      
+    } else {
+      // If it's a different kind of error, re-throw it to fail the test
+      throw error;
+    }
+  }
+  
+  // Continue with the rest of your test steps after successful navigation/reload
+     await expect(page).toHaveURL('http://ngepsit.eperolehan.com.my/home');
     // Close the popup if it appears
     async function conditionallyClick(page: Page) {
     const closeButton = page.getByRole('button', { name: '×' });
@@ -182,7 +211,9 @@ test('register MOF Account', async ({ page }) => {
     await page.getByRole('button', { name: 'ui-button' }).click();
     await page.locator('.ui-datepicker, .ui-calendar, .ui-datepicker-div').waitFor({ state: 'visible' });
     await page.getByRole('link', { name: today_ }).click();
+
     const positionInput = page.locator('xpath=//label[text()="Position in Business / Company"]/../../td/input');
     await positionInput.fill('Director');
+    
 
 });
