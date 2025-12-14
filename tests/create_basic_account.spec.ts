@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+// Import the specific functions we need from our new utility file
+import { generateRandomName, generateRandomICNumber } from './utils/datagenerator';
 
 test('register Basic Account', async ({ page }) => {
     await page.goto('http://ngepuat.eperolehan.com.my/home');
