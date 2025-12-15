@@ -61,7 +61,7 @@ test('register MOF Account', async ({ page }) => {
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_label"]').click();
     await page.waitForLoadState('networkidle'); //wait for page load
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_panel"]').getByText('ROB - Sole-Proprietorship').click();
-    await page.waitForTimeout(3000); // Wait 3 seconds
+    await page.waitForTimeout(2000); // Wait 2 seconds
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').fill('00112233-B');
     await page.waitForLoadState('networkidle'); //wait for page load
@@ -204,6 +204,7 @@ test('register MOF Account', async ({ page }) => {
 
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').fill('12345');
+
     await page.getByRole('cell', { name: 'Muslim' }).nth(1).click();
 
     //Date Picker - Registration Date (today) 
@@ -214,6 +215,32 @@ test('register MOF Account', async ({ page }) => {
 
     const positionInput = page.locator('xpath=//label[text()="Position in Business / Company"]/../../td/input');
     await positionInput.fill('Director');
-    
 
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:usrEmail"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:usrEmail"]').fill('aimantesting02@gmail.com');
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:conEmail"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:conEmail"]').fill('aimantesting02@gmail.com');
+    
+    //Mobile No.*
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:areaCodeCompId"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:areaCodeCompId"]').fill('12');
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:phoneNoCompId"]').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:phoneNoCompId"]').fill('34567890');
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:telcoCompId_label"]').click();
+    await page.getByRole('listitem', { name: 'Celcom' }).click();
+
+    //Tick checkbox 'Same as above' for Correspondence Address
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:chkAddMode"]').click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+
+    // Click Submit button
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
+
+    //I Accept the terms and conditions (click the checkbox)
+    await page.getByLabel('Supplier Administrator').getByRole('cell').filter({ hasText: /^$/ }).click();
+  
+    // Tick on Proceed button
+    await page.getByRole('button', { name: 'Proceed' }).click();
+    
 });
