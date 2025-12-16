@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { TimeoutError } from 'playwright/test'; // Import the specific error type
 // Import the specific functions we need from our new utility file
-import { generateRandomName, generateRandomICNumber } from './utils/datagenerator';
+import { generateRandomName, generateRandomICNumber, generateDynamicValues } from './utils/datagenerator';
 
 test('register MOF Account', async ({ page }) => {
 
-    const targetUrl = 'http://ngepsit.eperolehan.com.my/home'; // Replace with your actual URL
+    const targetUrl = 'http://ngepuat.eperolehan.com.my/home'; // Replace with your actual URL
   const navigationTimeout = 15000; // Set "too long" to 15 seconds (15000ms)
 
   try {
@@ -33,7 +33,10 @@ test('register MOF Account', async ({ page }) => {
   }
   
   // Continue with the rest of your test steps after successful navigation/reload
-     await expect(page).toHaveURL('http://ngepsit.eperolehan.com.my/home');
+     await expect(page).toHaveURL('http://ngepuat.eperolehan.com.my/home');
+  // Generate dynamic values for each run
+  const repeatIndex = test.info().repeatEachIndex;
+  const { regNo, companyName } = generateDynamicValues(repeatIndex);
     // Close the popup if it appears
     async function conditionallyClick(page: Page) {
     const closeButton = page.getByRole('button', { name: '×' });
@@ -63,14 +66,14 @@ test('register MOF Account', async ({ page }) => {
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_panel"]').getByText('ROB - Sole-Proprietorship').click();
     await page.waitForTimeout(2000); // Wait 2 seconds
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').click();
-    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').fill('00112233-B');
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').fill(regNo);
     await page.waitForLoadState('networkidle'); //wait for page load
 //Business Network
     await page.locator('.ui-chkbox-box').first().click();
     await page.waitForLoadState('networkidle'); //wait for page load
 //Company Information
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:companyNameId"]').click();
-    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:companyNameId"]').fill('testBusinessROBSole_1');
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:companyNameId"]').fill(companyName);
     await page.waitForLoadState('networkidle'); //wait for page load
     //Date Picker - Registration Date (today) 
     const today = String(new Date().getDate());
