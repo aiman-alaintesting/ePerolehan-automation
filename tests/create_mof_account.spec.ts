@@ -1,36 +1,15 @@
-import { test, expect } from '@playwright/test';
-import { TimeoutError } from 'playwright/test'; // Import the specific error type
+import { test, expect, Page } from '@playwright/test';
 // Import the specific functions we need from our new utility file
 import { generateRandomName, generateRandomICNumber, generateDynamicValues } from './utils/datagenerator';
+import { navigateWithTimeoutRetry } from './utils/pageReload';
+import { time } from 'console';
 
 test('register MOF Account', async ({ page }) => {
 
     const targetUrl = 'http://ngepuat.eperolehan.com.my/home'; // Replace with your actual URL
-  const navigationTimeout = 15000; // Set "too long" to 15 seconds (15000ms)
 
-  try {
-    // Attempt to go to the URL with a specific timeout
-    await page.goto(targetUrl, { timeout: navigationTimeout });
-    console.log('Successfully navigated to the website.');
-
-  } catch (error) {
-    // Check if the error is specifically a Playwright TimeoutError
-    if (error instanceof TimeoutError) {
-      console.warn(`Navigation timed out after ${navigationTimeout / 1000}s. Refreshing page...`);
-      
-      // Refresh the page
-      await page.reload();
-
-      // Wait for the page to reach a stable state after the reload
-      await page.waitForLoadState('domcontentloaded'); 
-
-      console.log('Page refreshed and ready. Proceeding with the test.');
-      
-    } else {
-      // If it's a different kind of error, re-throw it to fail the test
-      throw error;
-    }
-  }
+    // Navigate with timeout retry
+    await navigateWithTimeoutRetry(page, targetUrl);
   
   // Continue with the rest of your test steps after successful navigation/reload
      await expect(page).toHaveURL('http://ngepuat.eperolehan.com.my/home');
@@ -45,6 +24,8 @@ test('register MOF Account', async ({ page }) => {
     await closeButton.click();
     }
     }
+    // Change language to English
+    await conditionallyClick(page);
     await page.locator('[id="_82_languageId"]').selectOption('en_US');
     await page.waitForTimeout(3000); // Wait 2 seconds
     await page.locator('xpath=//*[@id="quicklaunch"]/div/div[2]/div[2]/div').click();
@@ -170,11 +151,12 @@ test('register MOF Account', async ({ page }) => {
     await page.getByRole('cell', { name: 'Yes' }).nth(1).click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermAdd1"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermAdd1"]').fill('Address 1');
-    
+    await page.waitForTimeout(2000); // Wait 2 seconds 
+
     // 1. Select the State 'JOHOR'
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermState_label"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermState_panel"]').getByText('JOHOR').click();
-    await page.waitForTimeout(1000); // Wait 1 seconds    
+    await page.waitForTimeout(2000); // Wait 2 seconds    
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermDistrict_label"]').click();
 
     // *** ADDED: Wait for the parent panel to become visible ***
@@ -186,7 +168,7 @@ test('register MOF Account', async ({ page }) => {
 
     // Perform the final click (this should now pass the visibility check)
     await batuPahatOption.click();
-    await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForTimeout(2000); // Wait 2 seconds
 
     // Wait for the City dropdown to become enabled/ready after 'BATU PAHAT' loads its data
     const cityTrigger = page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:cmbPermCity_label"]');
@@ -203,11 +185,11 @@ test('register MOF Account', async ({ page }) => {
 
     // Perform the final click (this should now pass the visibility check)
     await ayerHitamOption.click();
-    await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForTimeout(1000); // Wait 1 second
 
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtPermPostcodeMy"]').fill('12345');
-
+    await page.waitForTimeout(2000); // Wait 2 seconds
     await page.getByRole('cell', { name: 'Muslim' }).nth(1).click();
 
     //Date Picker - Registration Date (today) 
@@ -231,18 +213,20 @@ test('register MOF Account', async ({ page }) => {
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:phoneNoCompId"]').fill('34567890');
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:txtMobileNoId:telcoCompId_label"]').click();
     await page.getByRole('listitem', { name: 'Celcom' }).click();
+    await page.waitForTimeout(2000); // Wait 2 seconds
 
     //Tick checkbox 'Same as above' for Correspondence Address
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:chkAddMode"]').click();
-    await page.waitForTimeout(2000); // Wait 2 seconds
+    //await page.waitForTimeout(2000); // Wait 2 seconds
 
     // Click Submit button
-    await page.getByRole('button', { name: 'Submit' }).click();
-    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.getByRole('button', { name: 'Submit' }).click({ timeout: 10000 });
+    //await page.waitForTimeout(3000); // Wait 3 seconds
 
     //I Accept the terms and conditions (click the checkbox)
     await page.getByLabel('Supplier Administrator').getByRole('cell').filter({ hasText: /^$/ }).click();
-  
+    //await page.waitForTimeout(2000); // Wait 2 seconds
+
     // Tick on Proceed button
     await page.getByRole('button', { name: 'Proceed' }).click();
     
