@@ -1,5 +1,6 @@
-// pageUtils.ts
+// pageReload.ts
 import { Page } from '@playwright/test';
+import TimeoutError from '@playwright/test';
 
 /**
  * Navigates to a URL with a timeout, and retries by refreshing the page if it times out.

@@ -109,8 +109,9 @@ test('Supplier declare application', async ({ page }) => {
         await page.getByRole('button', { name: 'ui-button' }).click();
         const todayDate = new Date().getDate().toString();
         await page.getByRole('link', { name: todayDate }).click();
-
+        // Select Bumiputera
         await page.getByRole('cell', { name: 'Yes' }).nth(1).click();
+        
         await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:equiPerRace_label"]').click();
         await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:equiPerRace_panel"]').getByText('MELAYU', { exact: true }).click();
         await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:equiPerIcNum"]').click();

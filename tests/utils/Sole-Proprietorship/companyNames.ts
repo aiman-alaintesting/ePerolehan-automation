@@ -1,8 +1,6 @@
 // companyNames.ts
 export const companyNames: string[] = [
   
-  'MOF_Sole_81',
-  'MOF_Sole_90',
   'MOF_Sole_91',
   'MOF_Sole_92',
   'MOF_Sole_93',

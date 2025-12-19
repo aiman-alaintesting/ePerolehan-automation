@@ -60,6 +60,8 @@ test('register Basic Account', async ({ page }) => {
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:phoneNoCompId"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:telNoId:phoneNoCompId"]').fill('34567890');
     await page.waitForLoadState('networkidle'); //wait for page load
+
+    
 });
 
 // test('create basic account', async ({ page }) => {
