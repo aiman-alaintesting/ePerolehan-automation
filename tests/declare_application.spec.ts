@@ -28,11 +28,12 @@ test('Supplier declare application', async ({ page }) => {
      
         await page.getByTitle('Login To ePerolehan').click();
         await page.getByRole('textbox', { name: 'ID Log Masuk :' }).click();
-        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole67');
+        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole86');
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).click();
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).fill('P@ssw0rd1234');
         await page.getByRole('button', { name: 'Log Masuk' }).click();
         await page.getByRole('link', { name: 'Declare Application' }).click();
+            await page.waitForTimeout(1000); // Wait 1 seconds
         await page.locator('[id="_DirectMofRegistration_WAR_NGePportlet_:form:tt:smSupAnnRev_label"]').click();
         await page.locator('[id="_DirectMofRegistration_WAR_NGePportlet_:form:tt:smSupAnnRev_panel"]').getByText('RM10,000,001 -').click();
         await page.getByRole('cell', { name: '0', exact: true }).first().click();
@@ -57,7 +58,7 @@ test('Supplier declare application', async ({ page }) => {
         await page.getByRole('button', { name: 'Next Section' }).click();
             await page.waitForTimeout(2000); // Wait 2 seconds
         await page.getByRole('button', { name: 'OK' }).click();
-            await page.waitForTimeout(7000); // Wait 7 seconds
+            await page.waitForTimeout(6000); // Wait 6 seconds
         await page.getByRole('button', { name: 'Next Section' }).click();
             await page.waitForTimeout(3000); // Wait 3 seconds
         await page.getByRole('link', { name: 'Edit' }).click();
@@ -101,9 +102,9 @@ test('Supplier declare application', async ({ page }) => {
 
         // For the salutation dropdown:
         // Locate the select box right after the text 'Salutation'
-        const dropdown = page.locator('[id$="equiPerSalutation_label"]');
-        await dropdown.waitFor({ state: 'visible' });
-        await dropdown.click();
+        const salutationDropdown = page.locator('[id$="equiPerSalutation_label"]');
+        await salutationDropdown.waitFor({ state: 'visible' });
+        await salutationDropdown.click();
                 await page.locator('[id$="equiPerSalutation_panel"]')
                 .getByText('Cik', { exact: true })
                 .click();
@@ -125,6 +126,7 @@ test('Supplier declare application', async ({ page }) => {
         await page.getByRole('button', { name: 'ui-button' }).click();
         const todayDate = new Date().getDate().toString();
         await page.getByRole('link', { name: todayDate }).click();
+            await page.waitForTimeout(1000); // Wait 1 seconds
         // Select Bumiputera
         await page.getByRole('cell', { name: 'Yes' }).nth(1).click();
         // Select Religion
@@ -134,118 +136,122 @@ test('Supplier declare application', async ({ page }) => {
         await page.waitForTimeout(1000); // Wait 1 seconds
         await page.getByText('State', { exact: true }).click();
         await page.waitForTimeout(1000); // Wait 1 seconds
-        /*
-        // 1. Click the State dropdown label using the unique suffix
-        // 1. Ensure the element is attached and visible before clicking
-            const stateDropdown = page.locator('[id$="shrPermState_label"]');
-            await stateDropdown.waitFor({ state: 'visible', timeout: 10000 }); 
-            await stateDropdown.click();
+       
+// 1. Define the stable container using your filter
+  // We use the $= CSS operator to match only the end of the ID (ignoring the dynamic prefix)
+  const cellContainer = page.locator('td')
+    .filter({ has: page.locator('[id$="staffPermAddrPan"]') }) // Matches ID ending with "staffPermAddrPan"
+    .filter({ hasText: '- Select One -1210 0' });
+    // 2. Now locate the State dropdown within that container   
+  const StateDropdown = cellContainer.locator('[id$="staffEquiPersPermState_label"]');
+  await StateDropdown.click();
 
-            // 2. Select JOHOR from the panel
-            // Use a more specific selector if the panel isn't opening
-            await page.locator('div[id$="shrPermState_panel"] li')
-                .filter({ hasText: /^JOHOR$/ })
-                .click();
-                    await page.waitForTimeout(2000); // Wait 2 seconds
+  // 2. Locate the panel and click the 'JOHOR' option
+    // We use [id$="_panel"] to find the panel ignoring the dynamic prefix
+    const StateDropdownPanel = page.locator('[id$="staffEquiPersPermState_panel"]');
+    await StateDropdownPanel.getByText('JOHOR', { exact: true }).click();
+            await page.waitForTimeout(1500); // Wait 2 seconds
 
-        // 2. Click the District dropdown label using the unique stable suffix
-        const districtDropdown = page.locator('[id$="shrPermDist_label"]');
-        await districtDropdown.click();
-                await page.locator('[id$="shrPermDist_panel"]')
-                    .getByText('BATU PAHAT', { exact: true })
-                    .click();
-                    await page.waitForTimeout(2000); // Wait 2 seconds
+   // --- Case 1: Staff Personal Address District Dropdown ---
+  // Scoping within the 'staffPermAddrPan' table cell with specific text
+  const districtCell = page.locator('td')
+    .filter({ has: page.locator('[id$="staffPermAddrPan"]') })
+    .filter({ hasText: '- Select One -BATU PAHATJOHOR' });
 
-        // 3. Click the City dropdown label using the unique stable suffix
-        const cityDropdown = page.locator('[id$="shrPermCity_label"]');
-        await cityDropdown.click();
-                await page.locator('[id$="shrPermCity_panel"]')
-                    .getByText('AYER HITAM', { exact: true })
-                    .click();
-                    await page.waitForTimeout(2000); // Wait 2 seconds
-        */
-/*
-// --- Select State (e.g., JOHOR) ---
-// Define a locator for the main container using the text visible in your image
-const addressDetailsSection = page.locator('div', { hasText: 'ADDRESS DETAILS' }).first();
+  // Locate by stable ID suffix 'staffEquiPersPermDist_label'
+  await districtCell.locator('[id$="staffEquiPersPermDist_label"]').click();
 
-// Ensure the main section is loaded and visible
-await expect(addressDetailsSection).toBeVisible({ timeout: 20000 });
-
-// Now, scope your search *inside* that container
-const stateLabel = addressDetailsSection.locator('[id$="shrPermState_label"]');
-
-// The element should now be found because its parent is active/visible
-await stateLabel.click();
-
-// ... rest of your code to select 'JOHOR' and wait for network idle ...
-
-await page.locator('[id$="shrPermState_panel"]')
-    .getByText('JOHOR', { exact: true })
-    .click();
-
-await page.waitForLoadState('networkidle');
-
-
-    // --- Select District (e.g., BATU PAHAT) ---
-    // The District dropdown is now visible and ready
-    const districtLabel = page.locator('[id$="shrPermDist_label"]');
-    await expect(districtLabel).toBeVisible({ timeout: 10000 }); 
-    await districtLabel.click();
-
-    // Select the option from the panel
-    await page.locator('[id$="shrPermDist_panel"]')
-        .getByText('BATU PAHAT', { exact: true })
-        .click();
-        
-    // CRITICAL: Wait for the page to finish the AJAX update after selecting District
-    await page.waitForLoadState('networkidle');
-
-
-    // --- Select City/Town (e.g., AYER HITAM) ---
-    // The City/Town dropdown is now visible and ready
-    const cityLabel = page.locator('[id$="shrPermCity_label"]');
-    await expect(cityLabel).toBeVisible({ timeout: 10000 }); 
-    await cityLabel.click();
-
-    // Select the option from the panel
-    await page.locator('[id$="shrPermCity_panel"]')
-        .getByText('AYER HITAM', { exact: true })
-        .click();
-        
-    // CRITICAL: Wait for the page to finish the final AJAX update
-    await page.waitForLoadState('networkidle');
-    */
-
-     // 1. Select State: JOHOR
-    const stateLabel = page.locator('[id$="shrPermState_label"]');
-    await stateLabel.click();
-
-    const statePanel = page.locator('[id$="shrPermState_panel"]');
-    await statePanel.getByText('JOHOR', { exact: true }).click();
-
-    // 2. Select District: BATU PAHAT
-    // Waiting for 'toBeEnabled' is more reliable than networkidle for AJAX updates
-    const districtLabel = page.locator('[id$="shrPermDist_label"]');
-    await expect(districtLabel).toBeEnabled({ timeout: 10000 });
-    await districtLabel.click();
-
-    const districtPanel = page.locator('[id$="shrPermDist_panel"]');
+  // 2. Select 'BATU PAHAT' from the panel using a stable ID suffix match
+    // We target the element ending in 'staffEquiPersPermDist_panel'
+    const districtPanel = page.locator('[id$="staffEquiPersPermDist_panel"]');
     await districtPanel.getByText('BATU PAHAT', { exact: true }).click();
+            await page.waitForTimeout(1500); // Wait 2 seconds
 
-    // 3. Select City/Town: AYER HITAM
-    const cityLabel = page.locator('[id$="shrPermCity_label"]');
-    await expect(cityLabel).toBeEnabled({ timeout: 10000 });
-    await cityLabel.click();
+  // --- Case 2: Staff Personal Address City Dropdown ---
+  // Scoping within the 'cell' role specifically named '- Select One -'
+  const cityCell = page.getByRole('cell', { name: '- Select One -', exact: true });
 
-    const cityPanel = page.locator('[id$="shrPermCity_panel"]');
+  // Locate by stable ID suffix 'staffEquiPersPermCity_label'
+  await cityCell.locator('[id$="staffEquiPersPermCity_label"]').click();
+  
+  // 2. Click the 'AYER HITAM' option from the panel
+    // Use [id$="..."] to match the panel's stable ID suffix
+    const cityPanel = page.locator('[id$="staffEquiPersPermCity_panel"]');
     await cityPanel.getByText('AYER HITAM', { exact: true }).click();
-    
-    // Optional: Final validation to ensure the label updated correctly
-    await expect(cityLabel).toHaveText('AYER HITAM');
+                await page.waitForTimeout(1500); // Wait 2 seconds
 
-        await page.locator('input[id$="staffEquiPersPermPostcode"]').fill('83000');
-        await page.getByRole('button', { name: 'Save' }).click();
+    // Locates the element whose ID ends with 'staffEquiPersPermAddrPostCodeMy'
+    // This ignores the dynamic '_MOFApplication_WAR_NGePportlet_:form:tt:j_idt2229:' prefix
+    const postCodeInput = page.locator('[id$="staffEquiPersPermAddrPostCodeMy"]');
+
+    // Fill with the value 12345
+    await postCodeInput.fill('12345');
+        await page.waitForTimeout(1000); // Wait 1 seconds
+      await page.getByRole('button', { name: 'Save' }).click();
         await page.waitForTimeout(3000); // Wait 3 seconds
 
+     await page.getByRole('button', { name: 'Next Section' }).click();
+         await page.waitForTimeout(2000); // Wait 2 seconds
+
+    const bumiAmtInput = page.locator('[id$="bumiAmt"]');
+        // Fill with the value 3000000
+        await bumiAmtInput.fill('3000000');
+
+     await page.getByRole('gridcell', { name: 'Value (RM)' }).click();
+         await page.waitForTimeout(2000); // Wait 2 seconds
+     await page.getByRole('button', { name: 'OK' }).click();
+         await page.waitForTimeout(2000); // Wait 2 seconds
+     await page.getByRole('link', { name: 'Edit' }).click();
+     //    await page.waitForTimeout(5000); // Wait 5 seconds
+
+   const equityAmountInput = page.locator('[id$="equiShrDetAmt"]');
+        // force: true bypasses the check for hidden overlays that might be stalling the action
+        await equityAmountInput.click({ force: true });
+        await equityAmountInput.fill('3000000', { force: true });
+
+     await page.getByText('Amount (RM)').click();
+     await page.getByRole('button', { name: 'Save' }).click();
+     //   await page.waitForTimeout(3000); // Wait 3 seconds
+     await page.getByRole('button', { name: 'Next Section' }).click();    
+     //   await page.waitForTimeout(2000); // Wait 2 seconds
+
+    await page.getByRole('link', { name: 'Edit' }).click();
+    //    await page.waitForTimeout(2000); // Wait 2 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankAcctPurposeVal_label"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankAcctPurposeVal_panel"]').getByText('Both (Payment,Registration)').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankBranchName"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankBranchName"]').fill('KL');
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:suppBankAddrs"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:suppBankAddrs"]').fill('Address 1');
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankState_label"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankState_panel"]').getByText('JOHOR', { exact: true }).click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankDist_label"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankDist_panel"]').getByText('BATU PAHAT').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankCity_label"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankCity_panel"]').getByText('AYER HITAM').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:suppBankPostCodeMy"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:suppBankPostCodeMy"]').fill('12345');
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:banCqTnc"]').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:banCqTnc"]').fill('test');
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.locator('.ui-selectlistbox-item > .ui-chkbox').nth(1).click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.getByLabel('Bank Information').getByRole('button', { name: 'Save' }).click();
+        await page.waitForTimeout(2000); // Wait 2 seconds
+    
 });
