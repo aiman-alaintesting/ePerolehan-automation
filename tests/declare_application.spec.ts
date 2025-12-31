@@ -28,7 +28,7 @@ test('Supplier declare application', async ({ page }) => {
      
         await page.getByTitle('Login To ePerolehan').click();
         await page.getByRole('textbox', { name: 'ID Log Masuk :' }).click();
-        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole100');
+        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole116');
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).click();
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).fill('P@ssw0rd1234');
         await page.getByRole('button', { name: 'Log Masuk' }).click();
@@ -211,10 +211,12 @@ test('Supplier declare application', async ({ page }) => {
         await equityAmountInput.fill('3000000', { force: true });
 
      await page.getByText('Amount (RM)').click();
+        await page.waitForTimeout(1000); // Wait 1 seconds
      await page.getByRole('button', { name: 'Save' }).click();
+        await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
      //   await page.waitForTimeout(3000); // Wait 3 seconds
      await page.getByRole('button', { name: 'Next Section' }).click();    
-     //   await page.waitForTimeout(2000); // Wait 2 seconds
+        await page.waitForTimeout(1000); // Wait 1 seconds
 
     await page.getByRole('link', { name: 'Edit' }).click();
     //    await page.waitForTimeout(2000); // Wait 2 seconds
@@ -235,35 +237,48 @@ const desiredOption = optionsPanel.getByText('Both (Payment,Registration)');
 
 // 1. Click the dropdown wrapper
 await accountPurposeDropdown.click();
-        //await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForTimeout(1500); // Wait 1.5 seconds
 // 2. WAIT EXPLICITLY for the options panel to be visible (auto-waits until timeout)
 await expect(optionsPanel).toBeVisible(); 
 
 // 3. Now click the specific desired option inside the panel
 await desiredOption.click();
 
+        await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
+
+// Bank Address
+const bankAddressInput = page.locator('[id$="suppBankAddrs"]');
+await bankAddressInput.fill('Address 1');
+// await page.getByText('Address', { exact: true }).click();
+
     // Bank Branch Name
 const branchInput = page.locator('[id$="smBankBranchName"]');
 await branchInput.fill('KL');
+    await page.waitForTimeout(1000); // Wait 1 seconds
+await page.getByText('Bank Branch').click();
 
 // Bank Address
 const addressInput = page.locator('[id$="suppBankAddrs"]');
 await addressInput.fill('Address 1');
+// await page.getByText('Address', { exact: true }).click();
 
 // State Dropdown
 await page.locator('[id$="smBankState_label"]').click();
+    await expect(page.locator('[id$="smBankState_panel"]')).toBeVisible();
 await page.locator('[id$="smBankState_panel"]').getByText('JOHOR', { exact: true }).click();
-    await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
 // District Dropdown
 await page.locator('[id$="smBankDist_label"]').click();
+    await expect(page.locator('[id$="smBankDist_panel"]')).toBeVisible();
 await page.locator('[id$="smBankDist_panel"]').getByText('BATU PAHAT').click();
-    await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
 // City Dropdown
 await page.locator('[id$="smBankCity_label"]').click();
+    await expect(page.locator('[id$="smBankCity_panel"]')).toBeVisible();
 await page.locator('[id$="smBankCity_panel"]').getByText('AYER HITAM').click();
-//    await page.waitForTimeout(1000); // Wait 1 seconds
+    await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
 // Postcode
 const postcodeInput = page.locator('[id$="suppBankPostCodeMy"]');
