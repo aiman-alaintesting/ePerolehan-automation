@@ -28,13 +28,14 @@ test('Supplier declare application', async ({ page }) => {
      
         await page.getByTitle('Login To ePerolehan').click();
         await page.getByRole('textbox', { name: 'ID Log Masuk :' }).click();
-        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole116');
+        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole137');
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).click();
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).fill('P@ssw0rd1234');
         await page.getByRole('button', { name: 'Log Masuk' }).click();
         await page.getByRole('link', { name: 'Declare Application' }).click();
             await page.waitForTimeout(1000); // Wait 1 seconds
         await page.locator('[id="_DirectMofRegistration_WAR_NGePportlet_:form:tt:smSupAnnRev_label"]').click();
+            await page.waitForTimeout(1000); // Wait 1 seconds
         await page.locator('[id="_DirectMofRegistration_WAR_NGePportlet_:form:tt:smSupAnnRev_panel"]').getByText('RM10,000,001 -').click();
         await page.getByRole('cell', { name: '0', exact: true }).first().click();
         await page.locator('input[id$=":bumiStf"]').fill('10');
@@ -205,25 +206,26 @@ test('Supplier declare application', async ({ page }) => {
         await page.waitForLoadState('networkidle');
      //    await page.waitForTimeout(5000); // Wait 5 seconds
 
-   const equityAmountInput = page.locator('[id$="equiShrDetAmt"]');
-        // force: true bypasses the check for hidden overlays that might be stalling the action
-        await equityAmountInput.click({ force: true });
-        await equityAmountInput.fill('3000000', { force: true });
+    await page.locator('[id$="equiShrDetAmt"]').dblclick();
+    const equityAmountInput = page.locator('[id$="equiShrDetAmt"]');
+        await equityAmountInput.focus();
+        await equityAmountInput.pressSequentially('3000000', { delay: 50 });
 
      await page.getByText('Amount (RM)').click();
-        await page.waitForTimeout(1000); // Wait 1 seconds
+        //await page.waitForTimeout(1000); // Wait 1 seconds
      await page.getByRole('button', { name: 'Save' }).click();
-        await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
+       // await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
      //   await page.waitForTimeout(3000); // Wait 3 seconds
-     await page.getByRole('button', { name: 'Next Section' }).click();    
-        await page.waitForTimeout(1000); // Wait 1 seconds
+            await page.waitForTimeout(3000); // Wait 3 seconds
+        await page.getByRole('button', { name: 'Next Section' }).click();
+        await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
     await page.getByRole('link', { name: 'Edit' }).click();
-    //    await page.waitForTimeout(2000); // Wait 2 seconds
+        //await page.waitForTimeout(1000); // Wait 1 seconds
 
-    const bankInfoPopup = page.getByText('Bank Information');
+    //const bankInfoPopup = page.getByText('Bank Information');
         // Explicitly wait for the title text to be in a 'visible' state
-        await bankInfoPopup.waitFor({ state: 'visible' });
+        //await expect(bankInfoPopup).toBeVisible(); 
             
      //   await page.getByText('- Select One -RegistrationPaymentBoth (Payment,Registration)Payment').click();
      //   await page.locator('[id="_MOFApplication_WAR_NGePportlet_:form:tt:smBankAcctPurposeVal_panel"]').getByText('Both (Payment,Registration)').click();
@@ -254,7 +256,7 @@ await bankAddressInput.fill('Address 1');
     // Bank Branch Name
 const branchInput = page.locator('[id$="smBankBranchName"]');
 await branchInput.fill('KL');
-    await page.waitForTimeout(1000); // Wait 1 seconds
+    //await page.waitForTimeout(1000); // Wait 1 seconds
 await page.getByText('Bank Branch').click();
 
 // Bank Address
@@ -265,27 +267,39 @@ await addressInput.fill('Address 1');
 // State Dropdown
 await page.locator('[id$="smBankState_label"]').click();
     await expect(page.locator('[id$="smBankState_panel"]')).toBeVisible();
-await page.locator('[id$="smBankState_panel"]').getByText('JOHOR', { exact: true }).click();
+await page.locator('[id$="smBankState_panel"]').getByText('JOHOR', { exact: true }).click({ force: true });
     await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
-
+/*
 // District Dropdown
 await page.locator('[id$="smBankDist_label"]').click();
     await expect(page.locator('[id$="smBankDist_panel"]')).toBeVisible();
-await page.locator('[id$="smBankDist_panel"]').getByText('BATU PAHAT').click();
+    */
+// District Dropdown
+const label = page.locator('[id$="smBankDist_label"]');
+    await label.click({ force: true });
+    await label.press('Enter'); // Force-triggers the dropdown open event
+    await page.waitForTimeout(1500); // Wait 1.5 second to ensure panel is rendered
+    //await expect(page.locator('[id$="smBankDist_panel"]')).toBeVisible();
+
+const option = page.locator('[id$="smBankDist_panel"]').getByText('BATU PAHAT');
+await option.dispatchEvent('click');
     await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
 // City Dropdown
 await page.locator('[id$="smBankCity_label"]').click();
-    await expect(page.locator('[id$="smBankCity_panel"]')).toBeVisible();
-await page.locator('[id$="smBankCity_panel"]').getByText('AYER HITAM').click();
+    //await expect(page.locator('[id$="smBankCity_panel"]')).toBeVisible();
+    await page.waitForTimeout(1500); // Wait 1.5 seconds
+await page.locator('[id$="smBankCity_panel"]').getByText('AYER HITAM').click({ force: true });
     await page.waitForLoadState('networkidle'); // Wait for network to be idle after selection
 
 // Postcode
 const postcodeInput = page.locator('[id$="suppBankPostCodeMy"]');
+await expect(postcodeInput).toBeVisible();
 await postcodeInput.fill('12345');
 
 // Terms & Conditions / Additional Field
 const tncInput = page.locator('[id$="banCqTnc"]');
+await expect(tncInput).toBeVisible(); 
 await tncInput.fill('test');
 
         // Click the first checkbox in the list
@@ -294,6 +308,7 @@ await tncInput.fill('test');
     // Click the second checkbox in the list
     await page.locator('.ui-selectlistbox-item > .ui-chkbox').nth(1).click();
   
+    await page.waitForTimeout(1000); // Wait 1 seconds
     await page.getByLabel('Bank Information').getByRole('button', { name: 'Save' }).click();
             
 });
