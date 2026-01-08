@@ -28,7 +28,7 @@ test('Supplier declare application', async ({ page }) => {
      
         await page.getByTitle('Login To ePerolehan').click();
         await page.getByRole('textbox', { name: 'ID Log Masuk :' }).click();
-        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('MOF_Sole137');
+        await page.getByRole('textbox', { name: 'ID Log Masuk :' }).fill('ROB_Partner02');
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).click();
         await page.getByRole('textbox', { name: 'Kata Laluan:' }).fill('P@ssw0rd1234');
         await page.getByRole('button', { name: 'Log Masuk' }).click();

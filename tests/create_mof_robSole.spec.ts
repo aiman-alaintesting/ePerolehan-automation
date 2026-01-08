@@ -44,7 +44,7 @@ test('register MOF Account', async ({ page }) => {
     await page.waitForTimeout(3000); // Wait 3 seconds
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_label"]').click();
     await page.waitForLoadState('networkidle'); //wait for page load
-    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_panel"]').getByText('ROB - Sole-Proprietorship').click();
+    await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:busTypeId_panel"]').getByText('ROB - Partnership').click();
     await page.waitForTimeout(2000); // Wait 2 seconds
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').click();
     await page.locator('[id="_onlineRegistration_WAR_NGePportlet_:form:regNo"]').fill(regNo);
